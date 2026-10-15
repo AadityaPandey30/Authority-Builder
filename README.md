@@ -152,6 +152,16 @@ pm2 save
 pm2 logs catalygn-content-service
 ```
 
+The daily scheduler runs at **12:00 PM IST** when `SCHEDULER_ENABLED=true`.
+The cron timezone is explicitly `Asia/Kolkata`, so this does not depend on the
+host's timezone. The process must be running at that time.
+
+An optional 10-minute pinger is available with `KEEPALIVE_ENABLED=true` and
+`KEEPALIVE_URL=https://your-service.onrender.com/health`. A self-request cannot
+reliably keep a Render free web service awake because a sleeping process cannot
+execute its own timer. Use an external uptime monitor or Render's supported
+always-on plan if preventing sleep is required.
+
 Run exactly **one** instance. The date-slot guard would still prevent a duplicate
 send, but a second instance would double-arm the cron for no benefit.
 

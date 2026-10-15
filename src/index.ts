@@ -6,6 +6,7 @@ import { startScheduler, stopScheduler } from './scheduler/scheduler';
 import { loadPlaybook } from './content/playbook';
 import { loadImageCatalog } from './content/images';
 import { normalizeIndianPhone } from './utils/phone';
+import { startKeepalive, stopKeepalive } from './keepalive';
 
 async function main(): Promise<void> {
   // Fail fast on config/data problems before opening ports or DB connections.
@@ -31,10 +32,12 @@ async function main(): Promise<void> {
   });
 
   startScheduler();
+  startKeepalive();
 
   const shutdown = async (signal: string): Promise<void> => {
     logger.info({ signal }, 'shutting down');
     stopScheduler();
+    stopKeepalive();
     server.close();
     await disconnectDb();
     process.exit(0);

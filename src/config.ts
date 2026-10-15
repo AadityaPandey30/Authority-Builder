@@ -74,6 +74,8 @@ export const config = {
   CRON_SCHEDULE: optional('CRON_SCHEDULE', '0 12 * * *'),
   CRON_TIMEZONE: optional('CRON_TIMEZONE', 'Asia/Kolkata'),
   SCHEDULER_ENABLED: optionalBool('SCHEDULER_ENABLED', true),
+  KEEPALIVE_ENABLED: optionalBool('KEEPALIVE_ENABLED', false),
+  KEEPALIVE_URL: optional('KEEPALIVE_URL', ''),
 
   // API / ops
   PORT: optionalInt('PORT', 4100),
