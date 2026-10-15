@@ -1,0 +1,40 @@
+{
+  "_comment": "TEMPLATE - replace these URLs with your real hosted images and rename to images.json. Each entry may be a plain URL string, or an object with 'url' and optional 'pillars' (matched case-insensitively against the pillar id) plus 'alt'. An entry with no pillars, or an empty pillars array, is usable for any pillar; an entry whose pillars do not include the chosen pillar is only used as a fallback when nothing better is available.",
+  "images": [
+    {
+      "url": "https://images.unsplash.com/photo-1552664730-d307ca884978?w=1080",
+      "pillars": ["leadership", "operations"],
+      "alt": "Team meeting around a table"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?w=1080",
+      "pillars": ["growth", "operations"],
+      "alt": "Notebook and charts on a desk"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1556761175-b413da4baf72?w=1080",
+      "pillars": ["sales", "leadership"],
+      "alt": "Two people in conversation"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?w=1080",
+      "pillars": ["pricing", "growth"],
+      "alt": "Coins and a small plant"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1497366216548-37526070297c?w=1080",
+      "pillars": ["positioning", "operations"],
+      "alt": "Bright minimal workspace"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?w=1080",
+      "pillars": ["leadership", "sales"],
+      "alt": "Colleagues collaborating"
+    },
+    {
+      "url": "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=1080",
+      "pillars": [],
+      "alt": "Whiteboard planning session"
+    }
+  ]
+}
