@@ -57,7 +57,9 @@ async function claimDate(postDate: string, phone: string): Promise<string | unde
  * send. Idempotent per date. Safe to call concurrently; exactly one caller
  * proceeds.
  */
-export async function publishDaily(options: { postDate?: string; force?: boolean } = {}): Promise<PublishResult> {
+export async function publishDaily(
+  options: { postDate?: string; force?: boolean; allowSentResend?: boolean } = {},
+): Promise<PublishResult> {
   const postDate = options.postDate ?? istDateString();
   const phone = normalizeIndianPhone(config.CATALYGN_RECIPIENT);
 
@@ -66,8 +68,13 @@ export async function publishDaily(options: { postDate?: string; force?: boolean
   const catalog = await loadImageCatalog();
 
   if (options.force) {
-    // Manual re-run of an existing date: clear the guard intentionally.
-    await Publication.deleteMany({ postDate, status: { $ne: 'sent' } });
+    // Manual re-run clears the guard. Re-sending a sent date is only allowed
+    // for the dedicated throwaway test slot.
+    await Publication.deleteMany(
+      options.allowSentResend
+        ? { postDate }
+        : { postDate, status: { $ne: 'sent' } },
+    );
   }
 
   const publicationId = await claimDate(postDate, phone);
