@@ -122,7 +122,7 @@ curl -s -X POST http://127.0.0.1:4100/test \
 must pass before arming the daily job:
 
 ```bash
-npm run send:now -- --test
+npm run send:test
 ```
 
 The `--test` flag publishes under the throwaway date `1970-01-01`, so you can

@@ -10,7 +10,8 @@
     "dev": "tsx watch src/index.ts",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test:generate": "tsx src/scripts/generateOnly.ts",
-    "send:now": "tsx src/scripts/sendNow.ts"
+    "send:now": "tsx src/scripts/sendNow.ts",
+    "send:test": "tsx src/scripts/sendNow.ts --test"
   },
   "engines": {
     "node": ">=18"
