@@ -5,17 +5,17 @@ import { logger } from '../logger';
 import { notifyViaWhatsApp } from './notify';
 
 /**
- * Full end-to-end test: composes AND delivers one post, bypassing the daily
- * guard only when --force is passed. Defaults to a throwaway test date so a
- * smoke test never consumes a real day's slot.
+ * Full end-to-end test: composes AND delivers one post. Test runs use a
+ * throwaway date and reclaim any non-sent record for that date so a stale
+ * interrupted attempt cannot block a real-time retry.
  *
  *   npm run send:now                      # sends for postDate=today
- *   npm run send:now -- --test            # sends for 1970-01-01 (safe, repeatable)
+ *   npm run send:test                     # sends for 1970-01-01 (safe, repeatable)
  */
 async function main(): Promise<void> {
   const args = process.argv.slice(2);
   const useTestDate = args.includes('--test');
-  const force = args.includes('--force');
+  const force = useTestDate || args.includes('--force');
 
   await connectDb();
   try {
