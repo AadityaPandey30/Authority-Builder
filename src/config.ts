@@ -50,7 +50,7 @@ const serviceRoot = path.resolve(__dirname, '..');
 export const config = {
   // Gemini (free tier only)
   GEMINI_API_KEY: required('GEMINI_API_KEY'),
-  GEMINI_MODEL: optional('GEMINI_MODEL', 'gemini-3.8-flash'),
+  GEMINI_MODEL: optional('GEMINI_MODEL', 'gemini-2.5-flash'),
 
   // Existing OpsForge whatsapp-service (reused unchanged)
   WHATSAPP_SERVICE_URL: optional('WHATSAPP_SERVICE_URL', 'http://127.0.0.1:4000').replace(/\/+$/, ''),

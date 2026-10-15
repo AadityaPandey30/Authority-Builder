@@ -5,6 +5,8 @@ import { loadPlaybook } from './playbook';
 import { DEFAULT_PILLARS } from './pillars';
 
 const GEMINI_ENDPOINT = 'https://generativelanguage.googleapis.com/v1beta/models';
+const MAX_GENERATION_ATTEMPTS = 4;
+const GENERATION_RETRY_DELAY_MS = 1500;
 
 /** Hard ceiling on the caption body, WhatsApp-safe. */
 const MAX_CAPTION_CHARS = 900;
@@ -116,7 +118,7 @@ export function buildPrompt(
     '- Never invent statistics, client names, revenue figures, case studies, or research findings.',
     '- No emojis. No hashtags. No markdown headings or bullet symbols beyond simple dashes.',
     '- WhatsApp formatting only: *bold* for emphasis, sparingly.',
-    '- Total caption length must be under 900 characters.',
+    '- Total caption length must be under 750 characters, leaving room for formatting.',
     `- The only contact action is the DM number ${contactPhone}. Never output a meeting, calendar or scheduling link.`,
     '- Write in the second person, addressing a business owner directly.',
     '- If the playbook below states a rule, that rule wins over the guidance above.',
@@ -189,8 +191,8 @@ async function callGemini(prompt: string): Promise<string> {
 
 /**
  * Generates one post. Retries once with a corrective instruction when the model
- * returns prose instead of JSON, then fails loudly rather than sending a broken
- * caption.
+ * returns prose, exceeds the caption limit, or encounters a transient upstream
+ * failure. It fails loudly rather than sending a broken caption.
  */
 export async function generatePost(options: {
   pillar: ContentPillar;
@@ -207,11 +209,11 @@ export async function generatePost(options: {
 
   let lastError: Error | undefined;
 
-  for (let attempt = 1; attempt <= 2; attempt += 1) {
+  for (let attempt = 1; attempt <= MAX_GENERATION_ATTEMPTS; attempt += 1) {
     const attemptPrompt =
       attempt === 1
         ? prompt
-        : `${prompt}\n\nYour previous reply was not valid JSON. Reply with ONLY the JSON object.`;
+        : `${prompt}\n\nYour previous reply was invalid or too long. Reply with ONLY the JSON object, and keep the complete caption under 700 characters.`;
     try {
       const raw = await callGemini(attemptPrompt);
       const parsed = extractJson(raw);
@@ -248,8 +250,13 @@ export async function generatePost(options: {
     } catch (err) {
       lastError = err as Error;
       logger.warn({ attempt, err: lastError.message }, 'content generation attempt failed');
+      if (attempt < MAX_GENERATION_ATTEMPTS) {
+        await new Promise((resolve) => setTimeout(resolve, GENERATION_RETRY_DELAY_MS * attempt));
+      }
     }
   }
 
-  throw new Error(`Gemini content generation failed after 2 attempts: ${lastError?.message}`);
+  throw new Error(
+    `Gemini content generation failed after ${MAX_GENERATION_ATTEMPTS} attempts: ${lastError?.message}`,
+  );
 }
